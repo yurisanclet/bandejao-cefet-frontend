@@ -2,14 +2,12 @@
 import { useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
-export default function Login() {
-
-    const router = useRouter();
+export default function Register() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleEmailChange = (e: any) => {
       setEmail(e.target.value);
@@ -19,38 +17,55 @@ export default function Login() {
       setPassword(e.target.value);
     };
 
+    const handleConfirmPasswordChange = (e: any) => {
+      setConfirmPassword(e.target.value);
+    };
+
     const handleSubmit = (e: any) => {
       e.preventDefault();
-      router.push("/home");
     };
+    
     return (
       <main className='w-screen h-screen flex justify-center items-center bg-gradient-to-r'>
         <div className='flex flex-col items-center gap-5 shadow-md bg-white p-8 rounded'>
           <h1 className='font-bold text-3xl text-blue-900' >Bandejao CEFET</h1>
-          <h3 className='text-blue-900'>Efetue seu login:</h3>
+          <h3 className='text-blue-900'>Efetue seu cadastro:</h3>
           <form className='flex flex-col justify-center gap-4 w-72' onSubmit={handleSubmit}>
+            <TextField
+              label="Nome"
+              type="text"
+              required
+              size='small'
+            />
             <TextField
               label="Email"
               type="email"
               value={email}
               onChange={handleEmailChange}
-              // required
+              required
+              size='small'
             />
             <TextField
               label="Password"
               type="password"
               value={password}
               onChange={handlePasswordChange}
-              // required
+              required
+              size='small'
             />
-            <Link className='text-blue-900 self-end text-xs hover:text-blue-700' href="">
-             Esqueceu sua senha?
-            </Link>
-            <Button onClick={(e) => handleSubmit(e)} type="submit" variant="contained" color="primary" className='bg-blue-900'>
-              Login
+            <TextField
+              label="Confirm Password"
+              type="password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              required
+              size='small'
+            />
+            <Button type="submit" variant="contained" color="primary" className='bg-blue-900'>
+              Register
             </Button>
-            <div className='text-sm whitespace-nowrap'>
-              <span>Ainda nao tem uma conta? <Link className='text-blue-900 hover:text-blue-700' href="/register">Cadastre-se aqui</Link></span>
+            <div className='text-sm whitespace-nowrap self-center'>
+              <span>Já tem uma conta? <Link className='text-blue-900 hover:text-blue-700' href="/">Faça login aqui</Link></span>
             </div>
           </form>
         </div>
