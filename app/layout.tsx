@@ -18,10 +18,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {showNav && <Nav />}
-        <main className={showNav ? 'main-content' : ''}>
-          {children}
-        </main>
+        <div className="flex flex-row">
+          {showNav && (
+            <div className="w-52 flex-none">
+              <Nav/>
+            </div>
+          )}
+          <div className="flex-grow p-10">
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );

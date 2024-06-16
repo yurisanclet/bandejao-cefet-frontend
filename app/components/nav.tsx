@@ -11,7 +11,7 @@ import logo from '../../public/branco.png';
 
 export default function Nav() {
   return (
-    <div className="bg-blue-900 text-white flex flex-col justify-start items-center h-screen w-44 fixed">
+    <div className="bg-blue-900 text-white flex flex-col justify-start items-center h-screen">
       <Image src={logo} alt={""}/>
       <ul className="flex flex-col gap-6">
       <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
@@ -20,7 +20,7 @@ export default function Nav() {
         </li>
         <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
           <MenuBook/>
-          <Link className="text-lg" href="">Cardápio</Link>
+          <Link className="text-lg" href="/menu">Cardápio</Link>
         </li>
         <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
           <Fastfood/>

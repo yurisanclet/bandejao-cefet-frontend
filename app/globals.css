@@ -4,6 +4,6 @@
 
 
 .main-content {
-  @apply ml-64;
+  @apply mr-64;
   @apply pt-5;
 }
