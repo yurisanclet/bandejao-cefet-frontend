@@ -1,22 +1,31 @@
 'use client'
 import React, { useState } from 'react';
-import { Button, Accordion, AccordionSummary, Typography, AccordionDetails, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, Chip, AccordionActions } from '@mui/material';
+import { Button, Accordion, AccordionSummary, Typography, AccordionDetails, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, List, ListItem, ListItemText, AccordionActions } from '@mui/material';
 import Header from "../components/header";
 import { ArrowDropDown, Edit, Delete, Add } from '@mui/icons-material';
 
+interface Menu {
+  id: string;
+  date: string;
+  accompaniment: string;
+  garnish: string;
+  mainCourse: string;
+  dessert: string;
+}
+
 export default function Menu(){
   const [menus, setMenus] = useState([
-    { id: '124234', date: '17/06/2024', items: ['Item 1', 'Item 2', 'Item 3'] },
-    { id: '22152345', date: '18/06/2024', items: ['Item 4', 'Item 5', 'Item 6'] },
+    { id: '124234', date: '17/06/2024', accompaniment: 'Item 1', garnish: 'Item 2', mainCourse: 'Item 3', dessert: 'Item 4' },
+    { id: '22152345', date: '18/06/2024', accompaniment: 'Item 5', garnish: 'Item 6', mainCourse: 'Item 7', dessert: 'Item 8' },
   ]);
   const [open, setOpen] = useState(false);
-  const [newMenu, setNewMenu] = useState<{ date: string; items: string[] }>({ date: '', items: [] });
+  const [newMenu, setNewMenu] = useState<Menu>({ id: '', date: '', accompaniment: '', garnish: '', mainCourse: '', dessert: '' });
   const [newItem, setNewItem] = useState('');
 
   const handleAddMenu = () => {
     setOpen(false);
-    setMenus(prevMenus => [...prevMenus, { id: Date.now().toString(), ...newMenu }]);
-    setNewMenu({ date: '', items: [] });
+    setMenus(prevMenus => [...prevMenus, { ...newMenu }]);
+    setNewMenu({id:'', date: '', accompaniment: '', garnish: '', mainCourse: '', dessert: ''});
   };
 
   const handleDeleteMenu = (id: string) => {
@@ -26,16 +35,6 @@ export default function Menu(){
   const handleEditMenu = (id: string) => {
     // Implement edit menu logic
   };
-
-  const handleAddItem = () => {
-    setNewMenu(prev => ({ ...prev, items: [...prev.items, newItem] }));
-    setNewItem('');
-  };
-
-  const handleDelete = (itemToDelete: string) => () => {
-    setNewMenu(prev => ({ ...prev, items: prev.items.filter(item => item !== itemToDelete) }));
-  };
-
 
   return (
     <>
@@ -53,9 +52,20 @@ export default function Menu(){
             <Typography>Cardápio {menu.date}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {menu.items.map(item => (
-              <Typography key={item}>{item}</Typography>
-            ))}
+           <List className='flex'>
+              <ListItem>
+                <ListItemText primary="Acompanhamento" primaryTypographyProps={{ style: { color: '#1D4ED8'}}} secondary={menu.accompaniment} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Guarnição" primaryTypographyProps={{ style: { color: '#1D4ED8'}}} secondary={menu.garnish} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Prato Principal" primaryTypographyProps={{ style: { color: '#1D4ED8'}}} secondary={menu.mainCourse} />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Sobremesa" primaryTypographyProps={{ style: { color: '#1D4ED8'}}} secondary={menu.dessert} />
+              </ListItem>
+            </List>
           </AccordionDetails>
           <AccordionActions>
             <IconButton className='flex gap-2' color='primary' size='small' onClick={() => handleEditMenu(menu.id)}>Editar <Edit /></IconButton>
@@ -75,17 +85,16 @@ export default function Menu(){
             onChange={(e) => setNewMenu({ ...newMenu, date: e.target.value })}
           />
           <div>
-            {newMenu.items.map((item, index) => (
-              <Chip key={index} label={item} onDelete={handleDelete(item)} />
-            ))}
-            <TextField
-              margin="dense"
-              label="Item"
-              type="text"
-              value={newItem}
-              onChange={(e) => setNewItem(e.target.value)}
-            />
-            <IconButton onClick={handleAddItem}><Add /></IconButton>
+            <div className='flex justify-center'>
+              <TextField
+                margin="dense"
+                label="Item"
+                type="text"
+                value={newItem}
+                onChange={(e) => setNewItem(e.target.value)}
+              />
+              <IconButton ><Add /></IconButton>
+            </div>
           </div>
         </DialogContent>
         <DialogActions>

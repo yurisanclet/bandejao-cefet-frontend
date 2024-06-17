@@ -11,10 +11,10 @@ import logo from '../../public/branco.png';
 
 export default function Nav() {
   return (
-    <div className="bg-blue-900 text-white flex flex-col justify-start items-center h-screen">
+    <div className="bg-blue-900 text-white flex flex-col justify-start items-center h-full">
       <Image src={logo} alt={""}/>
       <ul className="flex flex-col gap-6">
-      <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
+        <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
           <Home/>
           <Link className="text-lg" href="/home">Inicio</Link>
         </li>

@@ -16,15 +16,15 @@ export default function RootLayout({
   const showNav = !['/', '/register'].includes(pathname);
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className="flex flex-row">
+    <html lang="en" className="h-full">
+      <body className={`${inter.className} h-full overflow-hidden`}>
+        <div className="flex flex-row h-full">
           {showNav && (
-            <div className="w-52 flex-none">
-              <Nav/>
+            <div className="w-52 flex-none h-full">
+              <Nav />
             </div>
           )}
-          <div className="flex-grow p-10">
+          <div className="flex-grow p-10 overflow-auto h-full">
             {children}
           </div>
         </div>
