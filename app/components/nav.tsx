@@ -27,10 +27,6 @@ export default function Nav() {
           <Link className="text-lg" href="/foods">Alimentos</Link>
         </li>
         <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
-          <CalendarToday/>
-          <Link className="text-lg" href="/route3">Calendario</Link>
-        </li>
-        <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
           <Person/>
           <Link className="text-lg" href="/route4">Perfil</Link>
         </li>

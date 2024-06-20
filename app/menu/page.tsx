@@ -1,55 +1,118 @@
 'use client'
-import React, { useState } from 'react';
-import { Button, Accordion, AccordionSummary, Typography, AccordionDetails, Dialog, DialogTitle, DialogContent, DialogActions, TextField, IconButton, List, ListItem, ListItemText, AccordionActions } from '@mui/material';
+import React, { FormEvent, useEffect, useState } from 'react';
+import { Button, Accordion, AccordionSummary, Typography, AccordionDetails, IconButton, List, ListItem, ListItemText, AccordionActions } from '@mui/material';
 import Header from "../components/header";
 import { ArrowDropDown, Edit, Delete, Add } from '@mui/icons-material';
-
-interface Menu {
-  id: string;
-  date: string;
-  accompaniment: string;
-  garnish: string;
-  mainCourse: string;
-  dessert: string;
-}
+import { ConfirmModal, MenuModal } from '../components/menu-modals';
+import { IMenu, IMenuCreateOrUpdate } from '../inteface';
+import { getMenus, createMenu, deleteMenu, updateMenu } from '../lib/actions/menu-actions';
+import { toast } from 'react-toastify';
+import { formatDateWithWeekDay } from '../utils/date-formatter';
 
 export default function Menu(){
-  const [menus, setMenus] = useState([
-    { id: '124234', date: '17/06/2024', accompaniment: 'Item 1', garnish: 'Item 2', mainCourse: 'Item 3', dessert: 'Item 4' },
-    { id: '22152345', date: '18/06/2024', accompaniment: 'Item 5', garnish: 'Item 6', mainCourse: 'Item 7', dessert: 'Item 8' },
-  ]);
-  const [open, setOpen] = useState(false);
-  const [newMenu, setNewMenu] = useState<Menu>({ id: '', date: '', accompaniment: '', garnish: '', mainCourse: '', dessert: '' });
-  const [newItem, setNewItem] = useState('');
 
-  const handleAddMenu = () => {
-    setOpen(false);
-    setMenus(prevMenus => [...prevMenus, { ...newMenu }]);
+  const [menuToDelete, setMenuToDelete] = useState<string | null>(null);
+  const [menus, setMenus] = useState<IMenu[]>([]);
+  const [menuModalOpen, setMenuModalOpen] = useState(false);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [newMenu, setNewMenu] = useState<IMenu>({ id: '', date: '', accompaniment: '', garnish: '', mainCourse: '', dessert: '' });
+
+  const handleGetMenus = async () => {
+    await getMenus().then((data) => {
+      console.log(data)
+      if(data.error){
+        console.log(data.error)
+        return
+      }
+      setMenus(data.items);
+    });
+  }
+
+  const handleCreateMenu = async (menuToCreate: IMenuCreateOrUpdate) => {
+    const result = await createMenu(menuToCreate);
+
+    if ('message' in result) {
+      toast.error('Erro ao criar menu:' + result.message);
+      return; // Handle error
+    }
+    setMenuModalOpen(false);
+  };
+
+  const handleUpdateMenu = async (menuId: string, menuToUpdate: IMenuCreateOrUpdate) => {
+    try {
+      const updatedMenu = await updateMenu(menuId, menuToUpdate);
+      setMenuModalOpen(false);
+      toast.success('Menu atualizado com sucesso!');
+    } catch (error: any) {
+      console.error('Error updating menu:', error);
+      toast.error('Erro ao atualizar o menu!'); 
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    const menuToCreateOrUpdate: IMenuCreateOrUpdate = {
+      date: newMenu.date,
+      accompaniment: newMenu.accompaniment,
+      garnish: newMenu.garnish,
+      mainCourse: newMenu.mainCourse,
+      dessert: newMenu.dessert
+    };
+    
+    if (newMenu.id) {
+      await handleUpdateMenu(newMenu.id, menuToCreateOrUpdate);
+    } else {
+      await handleCreateMenu(menuToCreateOrUpdate);
+    }
+    handleGetMenus();
     setNewMenu({id:'', date: '', accompaniment: '', garnish: '', mainCourse: '', dessert: ''});
+    setMenuModalOpen(false);
   };
 
-  const handleDeleteMenu = (id: string) => {
-    // Implement delete menu logic
+  const handleDeleteMenu = async (id: string) => {
+    setMenuToDelete(id);
+    setConfirmModalOpen(true);
   };
 
-  const handleEditMenu = (id: string) => {
-    // Implement edit menu logic
+  const handleEditMenu = (menu: IMenu) => {
+    setNewMenu(menu);
+    setMenuModalOpen(true);
   };
+
+  const handleConfirmDelete = async () => {
+    if (!menuToDelete) return;
+  
+    try {
+      await deleteMenu(menuToDelete);
+      toast.success("Menu deletado com sucesso!");
+    } catch (error: any) {
+      console.error('Error deleting menu:', error);
+      toast.error('Erro ao deletar o menu!'); 
+    } finally {
+      setMenuToDelete(null);
+      setConfirmModalOpen(false);
+      handleGetMenus();
+    }
+  };
+
+  useEffect(() => {
+    handleGetMenus()
+  }, [])
 
   return (
     <>
       <Header title="Cardápio"/>
-      <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
+      <Button variant="contained" color="primary" onClick={() => setMenuModalOpen(true)}>
         Adicionar Cardápio
       </Button>
-      {menus.map(menu => (
+      {menus?.map(menu => (
         <Accordion className='mt-4' key={menu.id}>
           <AccordionSummary
             expandIcon={<ArrowDropDown />}
             aria-controls="panel1-content"
             id="panel1-header"
           >
-            <Typography>Cardápio {menu.date}</Typography>
+            <Typography fontSize={20}>Cardápio - {formatDateWithWeekDay(menu.date)}</Typography>
           </AccordionSummary>
           <AccordionDetails>
            <List className='flex'>
@@ -68,40 +131,23 @@ export default function Menu(){
             </List>
           </AccordionDetails>
           <AccordionActions>
-            <IconButton className='flex gap-2' color='primary' size='small' onClick={() => handleEditMenu(menu.id)}>Editar <Edit /></IconButton>
+            <IconButton className='flex gap-2' color='primary' size='small' onClick={() => handleEditMenu(menu)}>Editar <Edit /></IconButton>
             <IconButton className='flex gap-2' color='error' size='small' onClick={() => handleDeleteMenu(menu.id)}>Deletar <Delete /></IconButton>
           </AccordionActions>
         </Accordion>
       ))}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Adicionar Cardápio</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            type="date"
-            fullWidth
-            value={newMenu.date}
-            onChange={(e) => setNewMenu({ ...newMenu, date: e.target.value })}
-          />
-          <div>
-            <div className='flex justify-center'>
-              <TextField
-                margin="dense"
-                label="Item"
-                type="text"
-                value={newItem}
-                onChange={(e) => setNewItem(e.target.value)}
-              />
-              <IconButton ><Add /></IconButton>
-            </div>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancelar</Button>
-          <Button onClick={handleAddMenu}>Adicionar</Button>
-        </DialogActions>
-      </Dialog>
+      <MenuModal
+        open={menuModalOpen}
+        handleClose={() => setMenuModalOpen(false)}
+        handleSave={handleSubmit}
+        menu={newMenu}
+        setMenu={setNewMenu}
+      />
+      <ConfirmModal
+        open={confirmModalOpen}
+        handleClose={() => setConfirmModalOpen(false)}
+        handleConfirm={handleConfirmDelete}
+      />
     </>
   )
 }

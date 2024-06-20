@@ -37,18 +37,8 @@ export default function Home() {
         </section>
 
         <section className="mb-8 lg:col-span-2">
-          <h2 className="text-xl font-bold mb-2">Informações Nutricionais</h2>
-          {/* Conteúdo das informações nutricionais */}
-        </section>
-
-        <section className="mb-8 lg:col-span-2">
           <h2 className="text-xl font-bold mb-2">Feedback dos Alunos</h2>
           {/* Conteúdo do feedback dos alunos */}
-        </section>
-
-        <section className="mb-8 lg:col-span-2">
-          <h2 className="text-xl font-bold mb-2">Informações de Contato e Horário de Funcionamento</h2>
-          {/* Conteúdo das informações de contato e horário */}
         </section>
       </div>
     </div>

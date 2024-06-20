@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Nav from "./components/nav";
 import "./globals.css";
 import { usePathname } from "next/navigation";
+import Providers from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,9 +25,11 @@ export default function RootLayout({
               <Nav />
             </div>
           )}
-          <div className="flex-grow p-10 overflow-auto h-full">
-            {children}
-          </div>
+          <Providers>
+            <div className="flex-grow p-10 overflow-auto h-full">
+              {children}
+            </div>
+          </Providers>
         </div>
       </body>
     </html>
