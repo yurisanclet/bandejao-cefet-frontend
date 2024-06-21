@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { loginUser } from './lib/actions/user-actions';
+import logo from '../public/azul.png';
+import Image from "next/image";
 
 export default function Login() {
 
@@ -39,7 +41,10 @@ export default function Login() {
     return (
       <main className='w-screen h-screen flex justify-center items-center bg-gradient-to-r'>
         <div className='flex flex-col items-center gap-5 shadow-md bg-white p-8 rounded'>
-          <h1 className='font-bold text-3xl text-blue-900' >Bandejao CEFET</h1>
+          <div className='flex flex-col items-center'>
+            <Image src={logo} alt={""} height={200} color='blue'/>
+            <h1 className='font-bold text-3xl text-blue-900' >Bandejao CEFET</h1>
+          </div>
           <h3 className='text-blue-900'>Efetue seu login:</h3>
           <form className='flex flex-col justify-center gap-4 w-72' onSubmit={handleSubmit}>
             <TextField

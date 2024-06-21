@@ -1,4 +1,5 @@
 import { IUser } from "@/app/inteface";
+import { fetchWithToken } from "../interceptor/intercept-tokeen";
 
 export async function createUser(user: IUser){
   try {
@@ -26,13 +27,15 @@ export async function createUser(user: IUser){
 
 export async function updateUser(user: IUser) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/${user.id}`, {
-      method: 'PUT',
+    const res = await fetchWithToken(`${process.env.NEXT_PUBLIC_BASE_URL}/user/${user.id}`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(user)
     });
+
+
 
     if(res.ok){
       const data = await res.json()

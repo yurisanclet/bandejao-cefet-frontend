@@ -7,6 +7,8 @@ import { createUser } from '../lib/actions/user-actions';
 import { IUser } from '../inteface';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import logo from '../../public/azul.png'
 
 export default function Register() {
     const router = useRouter()
@@ -48,7 +50,10 @@ export default function Register() {
     return (
       <main className='w-screen h-screen flex justify-center items-center bg-gradient-to-r'>
         <div className='flex flex-col items-center gap-5 shadow-md bg-white p-8 rounded'>
-          <h1 className='font-bold text-3xl text-blue-900' >Bandejao CEFET</h1>
+          <div className='flex flex-col items-center'>
+            <Image src={logo} alt={""} height={200}/>
+            <h1 className='font-bold text-3xl text-blue-900' >Bandejao CEFET</h1>
+          </div>
           <h3 className='text-blue-900'>Efetue seu cadastro:</h3>
           <form className='flex flex-col justify-center gap-4 w-72' onSubmit={handleSubmit}>
             <TextField

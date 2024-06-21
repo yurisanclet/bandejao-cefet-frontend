@@ -95,6 +95,7 @@ export async function updateMenu(menuId: string, menuToUpdate: IMenuCreateOrUpda
 export async function findMenuToday() {
   try {
     const res = await fetchWithToken(`${process.env.NEXT_PUBLIC_BASE_URL}/menu/today`);
+    console.log(res)
     const data = await res.json();
     return data;
   } catch (error: any) {
