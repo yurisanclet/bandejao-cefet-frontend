@@ -1,11 +1,13 @@
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
+
 export function formatDateWithWeekDay(date: string){
-  const [year, month, day] = date.split('-');
-  const dateObj = new Date(Number(year), Number(month) - 1, Number(day));
-  return `${dateObj.toLocaleDateString()} - ${dateObj.toLocaleDateString('pt-BR', { weekday: 'long'})}`;
+  const formattedDate = parseISO(date);
+  return `${format(formattedDate, 'dd/MM/yyyy')} - ${format(formattedDate, 'EEEE', { locale: ptBR })}`;
 }
 
 export function formatDate(date: string){
-  const [year, month, day] = date.split('-');
-  const dateObj = new Date(Number(year), Number(month) - 1, Number(day));
-  return dateObj.toLocaleDateString();
+  const formattedDate = parseISO(date);
+  return format(formattedDate, 'dd/MM/yyyy');
 }

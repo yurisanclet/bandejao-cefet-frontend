@@ -28,19 +28,21 @@ export default function Menu(){
     });
   }
 
-  const handleCreateMenu = async (menuToCreate: IMenuCreateOrUpdate) => {
-    const result = await createMenu(menuToCreate);
-
-    if ('message' in result) {
-      toast.error('Erro ao criar menu:' + result.message);
-      return; // Handle error
+  async function handleCreateMenu(menuToCreate: IMenuCreateOrUpdate) {
+    try {
+      await createMenu(menuToCreate);
+      toast.success('Menu criado com sucesso!');
+    } catch (error) {
+      console.error('Error creating menu:', error);
+      toast.error('Erro ao criar o menu!');
+    } finally {
+      setMenuModalOpen(false)
     }
-    setMenuModalOpen(false);
-  };
+  }
 
   const handleUpdateMenu = async (menuId: string, menuToUpdate: IMenuCreateOrUpdate) => {
     try {
-      const updatedMenu = await updateMenu(menuId, menuToUpdate);
+      await updateMenu(menuId, menuToUpdate);
       setMenuModalOpen(false);
       toast.success('Menu atualizado com sucesso!');
     } catch (error: any) {

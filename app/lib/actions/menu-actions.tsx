@@ -1,13 +1,23 @@
 "use server"
 
 import { IMenu, IMenuCreateOrUpdate, PaginatedMenus } from "@/app/inteface"
+import { buildQueryString } from "@/app/utils/queryStringBuilder"
 
-export async function getMenus(): Promise<PaginatedMenus>{
+export async function getMenus(dateRange?: string): Promise<PaginatedMenus>{
   try {
-    const page = 1
-    const size = 10
-    const res = await fetch(`${process.env.BASE_URL}/menu?page=${page}&size=${size}`)
-    return await res.json()
+    const page = 1;
+    const size = 10;
+    const params: Record<string, string | string[] | undefined> = {
+      page: String(page),
+      size: String(size),
+    };
+    if (dateRange) {
+      params['filter'] = `date:lte:${dateRange}`;
+    }
+    const queryString = buildQueryString(params);
+    const res = await fetch(`${process.env.BASE_URL}/menu?${queryString}`);
+    const data = await res.json();
+    return data;
     
   } catch (error: any) {
      return error.message
@@ -78,5 +88,16 @@ export async function updateMenu(menuId: string, menuToUpdate: IMenuCreateOrUpda
   } catch (error: any) {
     console.error('Error updating menu:', error);
     throw error; 
+  }
+}
+
+export async function findMenuToday() {
+  try {
+    const res = await fetch(`${process.env.BASE_URL}/menu/today`);
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching menu:', error);
+    return { items: [], error: error.message, total: 0, page: 0, size: 0 };
   }
 }
