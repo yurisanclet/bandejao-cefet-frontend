@@ -1,6 +1,6 @@
 enum FoodStatus {
   OutOfDate = 'Fora da Validade',
-  InDate = 'Dento da Validade'
+  InDate = 'Dentro da Validade'
 }
 
 interface FoodStatusIndex {

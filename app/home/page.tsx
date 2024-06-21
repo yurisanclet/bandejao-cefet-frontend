@@ -31,13 +31,22 @@ export default function Home() {
 
   useEffect(() => {
     const fetchMenus = async () => {
-      console.log(dateRange)
       const data = await getMenus(dateRange); // Passe dateRange como argumento
-      console.log(data)
       setMenus(data.items);
     };
     const fetchTodayMenu = async () => {
       const data = await findMenuToday();
+      if(data.message){
+        setMenuToday({
+          id: '',
+          date: '',
+          accompaniment: 'Não cadastrado',
+          garnish: 'Não cadastrado',
+          mainCourse: 'Não cadastrado',
+          dessert: 'Não cadastrado'
+        })
+        return;
+      }
       setMenuToday(data);
     }
 

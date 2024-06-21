@@ -1,7 +1,6 @@
-"use server"
-
-import {IFoodCreateOrUpdate, PaginatedFoods } from "@/app/inteface"
+import { IFoodCreateOrUpdate, PaginatedFoods } from "@/app/inteface";
 import { buildQueryString } from "@/app/utils/queryStringBuilder";
+import { fetchWithToken } from "../interceptor/intercept-tokeen";
 
 export async function getFoods(sort?: string, expiryDate?: string, name?: string): Promise<PaginatedFoods> {
   const page = 1;
@@ -17,10 +16,10 @@ export async function getFoods(sort?: string, expiryDate?: string, name?: string
   if (name) {
     params['filter'] = `name:eq:${name}`;  
   }
-  console.log(params)
+
   const queryString = buildQueryString(params);
   try {
-    const res = await fetch(`${process.env.BASE_URL}/food?${queryString}`);
+    const res = await fetchWithToken(`${process.env.NEXT_PUBLIC_BASE_URL}/food?${queryString}`);
     const data = await res.json();
     return data;
   } catch (error: any) {
@@ -31,11 +30,8 @@ export async function getFoods(sort?: string, expiryDate?: string, name?: string
 
 export async function createFood(foodToCreate: IFoodCreateOrUpdate): Promise<void> {
   try {
-    const res = await fetch(`${process.env.BASE_URL}/food`, {
+    const res = await fetchWithToken(`${process.env.NEXT_PUBLIC_BASE_URL}/food`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(foodToCreate),
     });
     if (!res.ok) {
@@ -49,7 +45,7 @@ export async function createFood(foodToCreate: IFoodCreateOrUpdate): Promise<voi
 
 export async function deleteFood(id: string): Promise<void> {
   try {
-    const res = await fetch(`${process.env.BASE_URL}/food/${id}`, {
+    const res = await fetchWithToken(`${process.env.NEXT_PUBLIC_BASE_URL}/food/${id}`, {
       method: 'DELETE',
     });
     if (!res.ok) {
@@ -57,13 +53,13 @@ export async function deleteFood(id: string): Promise<void> {
     }
   } catch (error: any) {
     console.error('Error deleting food:', error);
-    throw error
+    throw error;
   }
 }
 
-export async function findOne(name: string) {
+export async function findOne(name: string): Promise<any> {
   try {
-    const res = await fetch(`${process.env.BASE_URL}/food?name=${name}`);
+    const res = await fetchWithToken(`${process.env.NEXT_PUBLIC_BASE_URL}/food?name=${name}`);
     const data = await res.json();
     return data;
   } catch (error: any) {
@@ -74,11 +70,8 @@ export async function findOne(name: string) {
 
 export async function updateFood(id: string, food: IFoodCreateOrUpdate): Promise<void> {
   try {
-    const res = await fetch(`${process.env.BASE_URL}/food/${id}`, {
+    const res = await fetchWithToken(`${process.env.NEXT_PUBLIC_BASE_URL}/food/${id}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(food),
     });
     if (!res.ok) {

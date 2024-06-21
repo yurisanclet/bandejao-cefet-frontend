@@ -2,27 +2,47 @@
 import { useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import Link from 'next/link';
+import { formatCPF } from '../utils/document-formatter';
+import { createUser } from '../lib/actions/user-actions';
+import { IUser } from '../inteface';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 export default function Register() {
+    const router = useRouter()
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [name, setName] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [document, setDocument] = useState('') 
+    const [birthDate, setBirthDate] = useState('')
 
-    const handleEmailChange = (e: any) => {
-      setEmail(e.target.value);
+    const doPasswordsMatch = () => {
+      return password.toString().toLocaleLowerCase().trim() === confirmPassword.toString().toLocaleLowerCase().trim();
     };
 
-    const handlePasswordChange = (e: any) => {
-      setPassword(e.target.value);
-    };
-
-    const handleConfirmPasswordChange = (e: any) => {
-      setConfirmPassword(e.target.value);
-    };
-
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
       e.preventDefault();
+      if (!doPasswordsMatch()) {
+        toast.error('Passwords do not match');
+        return;
+      }
+      const user: IUser = {
+        email,
+        password,
+        document,
+        name,
+        birthDate,
+      };
+      const response = await createUser(user);
+      console.log('res ',response)
+      if (response.message.error) {
+        toast.error(response.message.error);
+        return;
+      }
+      toast.success('Usuário criado com sucesso!');
+      router.push('/');
     };
     
     return (
@@ -34,6 +54,8 @@ export default function Register() {
             <TextField
               label="Nome"
               type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
               size='small'
             />
@@ -41,23 +63,43 @@ export default function Register() {
               label="Email"
               type="email"
               value={email}
-              onChange={handleEmailChange}
+              onChange={(e) => setEmail(e.target.value)}
               required
               size='small'
             />
             <TextField
-              label="Password"
+              label="CPF"
+              type="text"
+              value={formatCPF(document)}
+              onChange={(e) => setDocument(e.target.value)}
+              inputProps={{ maxLength: 14 }} 
+              required
+              size='small'
+            />
+            <TextField
+              label="Data de aniversário"
+              type="date"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              required
+              size='small'
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              label="Senha"
               type="password"
               value={password}
-              onChange={handlePasswordChange}
+              onChange={(e) => setPassword(e.target.value)}
               required
               size='small'
             />
             <TextField
-              label="Confirm Password"
+              label="Confirmar senha"
               type="password"
               value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
               size='small'
             />

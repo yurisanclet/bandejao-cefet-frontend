@@ -28,7 +28,7 @@ export default function Nav() {
         </li>
         <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
           <Person/>
-          <Link className="text-lg" href="/route4">Perfil</Link>
+          <Link className="text-lg" href="/perfil">Perfil</Link>
         </li>
       </ul>
     </div>

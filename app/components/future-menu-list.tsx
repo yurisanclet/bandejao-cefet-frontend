@@ -62,9 +62,6 @@ export default function FutureMenu({menus, setDateRange}: FutureMenuProps) {
       </Paper>
       {!menus.length ? (
         <>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', height: '100vh' }}>
-            <CircularProgress />
-          </div>
         </>
       ): (
         <div style={{ maxHeight: '400px', overflow: 'auto' }}>

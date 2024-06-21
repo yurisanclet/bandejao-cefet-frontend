@@ -39,5 +39,14 @@ export interface PaginatedItems<T> {
   size: number;
 }
 
+export interface IUser {
+  id?:string;
+  email: string,
+  password: string,
+  document: string,
+  name: string,
+  birthDate: string,
+}
+
 export type PaginatedFoods = PaginatedItems<IFood>;
 export type PaginatedMenus = PaginatedItems<IMenu>;

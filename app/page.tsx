@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { loginUser } from './lib/actions/user-actions';
 
 export default function Login() {
 
@@ -19,10 +21,21 @@ export default function Login() {
       setPassword(e.target.value);
     };
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
       e.preventDefault();
-      router.push("/home");
+
+
+      const response = await loginUser(email, password);
+      if (response.message && response.message.error) {
+        toast.error(response.message.error);
+      } else {
+          localStorage.setItem('token', response.access_token);
+          localStorage.setItem('loggedUser', JSON.stringify(response.user))
+          toast.success('Login successful');
+          router.push("/home");
+        }
     };
+
     return (
       <main className='w-screen h-screen flex justify-center items-center bg-gradient-to-r'>
         <div className='flex flex-col items-center gap-5 shadow-md bg-white p-8 rounded'>
