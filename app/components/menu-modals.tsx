@@ -21,6 +21,7 @@ export const MenuModal: React.FC<MenuModalProps> = ({ open, handleClose, handleS
           type="date"
           name='date'
           fullWidth
+          required
           value={menu.date}
           onChange={(e) => setMenu({ ...menu, date: e.target.value })}
         />
@@ -29,6 +30,7 @@ export const MenuModal: React.FC<MenuModalProps> = ({ open, handleClose, handleS
           margin="dense"
           label="Acompanhamento"
           type="text"
+          required
           name='accompaniment'
           fullWidth
           value={menu.accompaniment}
@@ -39,6 +41,7 @@ export const MenuModal: React.FC<MenuModalProps> = ({ open, handleClose, handleS
             margin="dense"
             label="Guarnição"
             type="text"
+            required
             name='garnish'
             fullWidth
             value={menu.garnish}
@@ -51,6 +54,7 @@ export const MenuModal: React.FC<MenuModalProps> = ({ open, handleClose, handleS
             label="Prato Principal"
             type="text"
             name='mainCourse'
+            required
             fullWidth
             value={menu.mainCourse}
             onChange={(e) => setMenu({ ...menu, mainCourse: e.target.value })}
@@ -61,16 +65,17 @@ export const MenuModal: React.FC<MenuModalProps> = ({ open, handleClose, handleS
             margin="dense"
             label="Sobremesa"
             type="text"
+            required
             name='dessert'
             fullWidth
             value={menu.dessert}
             onChange={(e) => setMenu({ ...menu, dessert: e.target.value })}
           />
+        <DialogActions>
+          <Button color="error" onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" onSubmit={handleSave}>{menu.id ? 'Salvar' : 'Adicionar'}</Button>
+        </DialogActions>
       </form>
-      <DialogActions>
-        <Button color="error" onClick={handleClose}>Cancelar</Button>
-        <Button type="submit" onClick={handleSave}>{menu.id ? 'Salvar' : 'Adicionar'}</Button>
-      </DialogActions>
     </DialogContent>
   </Dialog>
 );
