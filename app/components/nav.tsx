@@ -4,7 +4,8 @@ import {
   Fastfood,
   CalendarToday,
   Home,
-  Person
+  Person,
+  ExitToApp
 } from '@mui/icons-material';
 import Image from "next/image";
 import logo from '../../public/branco.png';
@@ -29,6 +30,10 @@ export default function Nav() {
         <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
           <Person/>
           <Link className="text-lg" href="/perfil">Perfil</Link>
+        </li>
+        <li className="flex flex-row items-center gap-1 transition-transform duration-500 ease-in-out transform hover:scale-110">
+          <ExitToApp/>
+          <Link className="text-lg" href="/logout">Sair</Link>
         </li>
       </ul>
     </div>
