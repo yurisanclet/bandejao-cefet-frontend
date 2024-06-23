@@ -2,108 +2,64 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { Button, Accordion, AccordionSummary, Typography, AccordionDetails, IconButton, List, ListItem, ListItemText, AccordionActions } from '@mui/material';
 import Header from "../components/header";
-import { ArrowDropDown, Edit, Delete, Add } from '@mui/icons-material';
-import { ConfirmModal, MenuModal } from '../components/menu-modals';
-import { IMenu, IMenuCreateOrUpdate } from '../inteface';
-import { getMenus, createMenu, deleteMenu, updateMenu } from '../lib/actions/menu-actions';
+import { ArrowDropDown, Edit, Delete } from '@mui/icons-material';
+import { MenuModal } from '../components/menuDialog';
+import { IMenu, CreateMenu, UpdateMenu } from '@/app/entity/menu.entity'; 
 import { toast } from 'react-toastify';
 import { formatDateWithWeekDay } from '../utils/date-formatter';
+import { MenuService } from '../lib/services/menu.service';
+import client from '../lib/axios/client';
 
-export default function Menu(){
-
-  const [menuToDelete, setMenuToDelete] = useState<string | null>(null);
+export default function Menu() {
   const [menus, setMenus] = useState<IMenu[]>([]);
   const [menuModalOpen, setMenuModalOpen] = useState(false);
-  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [newMenu, setNewMenu] = useState<IMenu>({ id: '', date: '', accompaniment: '', garnish: '', mainCourse: '', dessert: '' });
+  const [selectedMenu, setSelectedMenu] = useState<IMenu | null>(null);
+  const menuService = new MenuService(client);
 
   const handleGetMenus = async () => {
-    await getMenus().then((data) => {
-      console.log(data)
-      if(data.error){
-        console.log(data.error)
-        return
-      }
-      setMenus(data.items);
-    });
-  }
-
-  async function handleCreateMenu(menuToCreate: IMenuCreateOrUpdate) {
-    try {
-      await createMenu(menuToCreate);
-      toast.success('Menu criado com sucesso!');
-    } catch (error) {
-      console.error('Error creating menu:', error);
-      toast.error('Erro ao criar o menu!');
-    } finally {
-      setMenuModalOpen(false)
-    }
-  }
-
-  const handleUpdateMenu = async (menuId: string, menuToUpdate: IMenuCreateOrUpdate) => {
-    try {
-      await updateMenu(menuId, menuToUpdate);
-      setMenuModalOpen(false);
-      toast.success('Menu atualizado com sucesso!');
-    } catch (error: any) {
-      console.error('Error updating menu:', error);
-      toast.error('Erro ao atualizar o menu!'); 
-    }
+    await menuService.getMenus()
+      .then((data) => {
+        setMenus(data.items);
+      })
+      .catch((error) => {
+        console.error('Error fetching menus:', error);
+        toast.error('Erro ao buscar os cardápios!');
+      });
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    const menuToCreateOrUpdate: IMenuCreateOrUpdate = {
-      date: newMenu.date,
-      accompaniment: newMenu.accompaniment,
-      garnish: newMenu.garnish,
-      mainCourse: newMenu.mainCourse,
-      dessert: newMenu.dessert
-    };
-    
-    if (newMenu.id) {
-      await handleUpdateMenu(newMenu.id, menuToCreateOrUpdate);
-    } else {
-      await handleCreateMenu(menuToCreateOrUpdate);
-    }
+  const onSave = () => {
     handleGetMenus();
-    setNewMenu({id:'', date: '', accompaniment: '', garnish: '', mainCourse: '', dessert: ''});
-    setMenuModalOpen(false);
-  };
+  }
 
-  const handleDeleteMenu = async (id: string) => {
-    setMenuToDelete(id);
-    setConfirmModalOpen(true);
-  };
-
-  const handleEditMenu = (menu: IMenu) => {
-    setNewMenu(menu);
+  const handleEdit = (menu: IMenu) => {
+    setSelectedMenu(menu);
     setMenuModalOpen(true);
+  }
+
+  const handleConfirmDelete = async (id: string) => {
+    await menuService.deleteMenu(id)
+      .then(() => {
+        toast.success('Menu deletado com sucesso!');
+        handleGetMenus();
+      })
+      .catch((error) => {
+        console.error('Error deleting menu:', error);
+        toast.error('Erro ao deletar o menu!');
+      });
   };
 
-  const handleConfirmDelete = async () => {
-    if (!menuToDelete) return;
-  
-    try {
-      await deleteMenu(menuToDelete);
-      toast.success("Menu deletado com sucesso!");
-    } catch (error: any) {
-      console.error('Error deleting menu:', error);
-      toast.error('Erro ao deletar o menu!'); 
-    } finally {
-      setMenuToDelete(null);
-      setConfirmModalOpen(false);
-      handleGetMenus();
-    }
-  };
+  const handleClose = () => {
+    setMenuModalOpen(false);
+    setSelectedMenu(null);
+  }
 
   useEffect(() => {
-    handleGetMenus()
-  }, [])
+    handleGetMenus();
+  }, []);
 
   return (
     <>
-      <Header title="Cardápio"/>
+      <Header title="Cardápio" />
       <Button variant="contained" color="primary" onClick={() => setMenuModalOpen(true)}>
         Adicionar Cardápio
       </Button>
@@ -117,39 +73,33 @@ export default function Menu(){
             <Typography fontSize={20}>Cardápio - {formatDateWithWeekDay(menu.date)}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-           <List className='flex'>
+            <List className='flex'>
               <ListItem>
-                <ListItemText primary="Acompanhamento" primaryTypographyProps={{ style: { color: '#1D4ED8'}}} secondary={menu.accompaniment} />
+                <ListItemText primary="Acompanhamento" primaryTypographyProps={{ style: { color: '#1D4ED8' } }} secondary={menu.accompaniment} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Guarnição" primaryTypographyProps={{ style: { color: '#1D4ED8'}}} secondary={menu.garnish} />
+                <ListItemText primary="Guarnição" primaryTypographyProps={{ style: { color: '#1D4ED8' } }} secondary={menu.garnish} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Prato Principal" primaryTypographyProps={{ style: { color: '#1D4ED8'}}} secondary={menu.mainCourse} />
+                <ListItemText primary="Prato Principal" primaryTypographyProps={{ style: { color: '#1D4ED8' } }} secondary={menu.mainCourse} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Sobremesa" primaryTypographyProps={{ style: { color: '#1D4ED8'}}} secondary={menu.dessert} />
+                <ListItemText primary="Sobremesa" primaryTypographyProps={{ style: { color: '#1D4ED8' } }} secondary={menu.dessert} />
               </ListItem>
             </List>
           </AccordionDetails>
           <AccordionActions>
-            <IconButton className='flex gap-2' color='primary' size='small' onClick={() => handleEditMenu(menu)}>Editar <Edit /></IconButton>
-            <IconButton className='flex gap-2' color='error' size='small' onClick={() => handleDeleteMenu(menu.id)}>Deletar <Delete /></IconButton>
+            <IconButton className='flex gap-2' color='primary' size='small' onClick={() => handleEdit({...menu})}>Editar <Edit /></IconButton>
+            <IconButton className='flex gap-2' color='error' size='small' onClick={() => handleConfirmDelete(menu.id)}>Deletar <Delete /></IconButton>
           </AccordionActions>
         </Accordion>
       ))}
       <MenuModal
         open={menuModalOpen}
-        handleClose={() => setMenuModalOpen(false)}
-        handleSave={handleSubmit}
-        menu={newMenu}
-        setMenu={setNewMenu}
-      />
-      <ConfirmModal
-        open={confirmModalOpen}
-        handleClose={() => setConfirmModalOpen(false)}
-        handleConfirm={handleConfirmDelete}
+        handleClose={handleClose}
+        onSave={onSave}
+        selectedMenu={selectedMenu}
       />
     </>
-  )
+  );
 }

@@ -1,8 +1,10 @@
+'use client'
 import React, { ReactNode } from "react"
 import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 
-const Providers = ({ children }: { children: ReactNode }) => {
+
+const TemplateProviders = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <ToastContainer 
@@ -23,4 +25,4 @@ const Providers = ({ children }: { children: ReactNode }) => {
   )
 }
 
-export default Providers
+export default TemplateProviders

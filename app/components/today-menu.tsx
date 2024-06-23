@@ -2,14 +2,14 @@ import { ExpandLess, ExpandMore, Restaurant } from "@mui/icons-material";
 import { Avatar, Button, Collapse, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import { useEffect, useState } from "react";
-import { IMenu } from "../inteface";
+import { IMenu } from "../entity/menu.entity";
 
 interface MenuListProps {
   title: string,
-  items: IMenu
+  menu: IMenu
 }
 
-export function TodayMenu({items, title}: MenuListProps){
+export function TodayMenu({menu, title}: MenuListProps){
   const [open, setOpen] = useState(false);
 
   const handleClick = () => {
@@ -31,33 +31,41 @@ export function TodayMenu({items, title}: MenuListProps){
         <Button className="text-lg" endIcon={open ? <ExpandLess /> : <ExpandMore />} onClick={handleClick}>
           {title}
         </Button>
-        <Collapse in={open} timeout={timeoutDrop} unmountOnExit>
-          <List>
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar sx={{ bgcolor: blue[800] }}>
-                  <Restaurant />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary='Acompanhamento'
-                secondary={`${items.accompaniment}`}
-              />
-              <ListItemText
-                primary='Guarnição'
-                secondary={`${items.garnish}`}
-              />
-              <ListItemText
-                primary='Prato Principal'
-                secondary={`${items.mainCourse}`}
-              />
-              <ListItemText
-                primary='Sobremesa'
-                secondary={`${items.dessert}`}
-              />
-            </ListItem>
-          </List>
-        </Collapse>
+        {menu ? (
+          <>
+            <Collapse in={open} timeout={timeoutDrop} unmountOnExit>
+              <List>
+                <ListItem>
+                  <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: blue[800] }}>
+                      <Restaurant />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary='Acompanhamento'
+                    secondary={`${menu.accompaniment}`}
+                  />
+                  <ListItemText
+                    primary='Guarnição'
+                    secondary={`${menu.garnish}`}
+                  />
+                  <ListItemText
+                    primary='Prato Principal'
+                    secondary={`${menu.mainCourse}`}
+                  />
+                  <ListItemText
+                    primary='Sobremesa'
+                    secondary={`${menu.dessert}`}
+                  />
+                </ListItem>
+              </List>
+            </Collapse>
+          </>
+        ) : (
+          <>
+            <Typography variant="h6" className="text-start ml-2 mt-4">Nenhum cardápio encontrado</Typography>
+          </>
+        )}
       </div>
     </>
   )

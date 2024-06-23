@@ -1,41 +1,41 @@
 'use client'
-import { useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { loginUser } from './lib/actions/user-actions';
 import logo from '../public/azul.png';
 import Image from "next/image";
+import { UserService } from './lib/services/user.service';
+import client from './lib/axios/client';
+import { useForm } from 'react-hook-form';
+import { IUser } from './entity/user.entity';
 
 export default function Login() {
+    const userService = new UserService(client);
+    const {handleSubmit, register, formState: { errors }} = useForm<IUser>({
+        defaultValues: {
+            email: '',
+            password: '',
+        }
+    });
 
     const router = useRouter();
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleEmailChange = (e: any) => {
-      setEmail(e.target.value);
-    };
-
-    const handlePasswordChange = (e: any) => {
-      setPassword(e.target.value);
-    };
-
-    const handleSubmit = async (e: any) => {
-      e.preventDefault();
-
-
-      const response = await loginUser(email, password);
-      if (response.message && response.message.error) {
-        toast.error(response.message.error);
-      } else {
-          localStorage.setItem('token', response.access_token);
-          localStorage.setItem('loggedUser', JSON.stringify(response.user))
+    const onSubmit = async (formData: IUser) => {
+      const { email, password } = formData; // Desestruturação para obter email e senha
+      await userService.loginUser(email, password)
+        .then((response) => {
           toast.success('Login successful');
-          router.push("/home");
-        }
+          setTimeout(() => {
+            localStorage.setItem('token', response.access_token);
+            localStorage.setItem('loggedUser', JSON.stringify(response.user));
+            router.push("/home");
+          }, 2000); 
+        })
+        .catch((error) => {
+          console.error('Error logging in:', error);
+          toast.error('Failed to login');
+        });
     };
 
     return (
@@ -46,25 +46,31 @@ export default function Login() {
             <h1 className='font-bold text-3xl text-blue-900' >Bandejao CEFET</h1>
           </div>
           <h3 className='text-blue-900'>Efetue seu login:</h3>
-          <form className='flex flex-col justify-center gap-4 w-72' onSubmit={handleSubmit}>
+          <form className='flex flex-col justify-center gap-4 w-72' onSubmit={handleSubmit(onSubmit)}>
             <TextField
               label="Email"
               type="email"
-              value={email}
-              onChange={handleEmailChange}
-              // required
+              {...register("email", { required: true })}
+              error={!!errors.email}
+              helperText={errors.email ? "Email is required" : ""}
+              InputLabelProps={
+                { shrink: true }
+              }
             />
             <TextField
               label="Password"
               type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              // required
+              {...register("password", { required: true })}
+              error={!!errors.password} 
+              helperText={errors.password ? "Password is required" : ""}
+              InputLabelProps={
+                { shrink: true }
+              }
             />
             <Link className='text-blue-900 self-end text-xs hover:text-blue-700' href="">
              Esqueceu sua senha?
             </Link>
-            <Button onClick={(e) => handleSubmit(e)} type="submit" variant="contained" color="primary" className='bg-blue-900'>
+            <Button type="submit" variant="contained" color="primary" className='bg-blue-900'>
               Login
             </Button>
             <div className='text-sm whitespace-nowrap'>

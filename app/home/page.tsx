@@ -3,14 +3,16 @@ import { useEffect, useState } from "react";
 import Header from "../components/header";
 import { TodayMenu } from "../components/today-menu";
 import FutureMenu from "../components/future-menu-list";
-import NotificationList from "../components/notifications-list";
-import { IMenu } from "../inteface";
-import { getMenus, findMenuToday } from "../lib/actions/menu-actions";
+import { IMenu } from "../entity/menu.entity";
 import { addDays, format } from "date-fns";
+import { MenuService } from "../lib/services/menu.service";
+import client from "../lib/axios/client";
+import { toast } from "react-toastify";
 
 export default function Home() {
+
+  const menuService = new MenuService(client)
   const [menus, setMenus] = useState<IMenu[]>([])
-  const [isLoading, setIsLoading] = useState(false);
   const [menuToday, setMenuToday] = useState<IMenu>(
     {
       id: '',
@@ -28,30 +30,31 @@ export default function Home() {
 
   const [dateRange, setDateRange] = useState(formattedFutureDate)
 
+  const handleGetMenus = async (dateRange: string) => {
+    await menuService.getMenus(dateRange)
+      .then((data) => {
+        setMenus(data.items);
+      })
+      .catch((error) => {
+        console.error('Error fetching menus:', error);
+        toast.error('Erro ao buscar os cardápios!');
+      });
+  }
+
+  const fetchMenuToday = async () => {
+    await menuService.findMenuToday()
+      .then((data) => {
+        setMenuToday(data);
+      })
+  }
+
 
   useEffect(() => {
-    const fetchMenus = async () => {
-      const data = await getMenus(dateRange); // Passe dateRange como argumento
-      setMenus(data.items);
-    };
-    const fetchTodayMenu = async () => {
-      const data = await findMenuToday();
-      if(data.message){
-        setMenuToday({
-          id: '',
-          date: '',
-          accompaniment: 'Não cadastrado',
-          garnish: 'Não cadastrado',
-          mainCourse: 'Não cadastrado',
-          dessert: 'Não cadastrado'
-        })
-        return;
-      }
-      setMenuToday(data);
-    }
-
-    fetchTodayMenu();
-    fetchMenus();
+    fetchMenuToday();
+  }, []); 
+  
+  useEffect(() => {
+    handleGetMenus(dateRange);
   }, [dateRange]); 
 
   return (
@@ -59,7 +62,7 @@ export default function Home() {
       <Header title="Tela inicial" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
         <section className="mb-8">
-          <TodayMenu title="Cardápio do Dia" items={menuToday} />
+          <TodayMenu title="Cardápio do Dia" menu={menuToday} />
         </section>
 
         <section className="mb-8">

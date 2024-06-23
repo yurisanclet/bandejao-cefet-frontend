@@ -1,3 +1,5 @@
+import { IMenu } from "./entity/menu.entity";
+
 export interface IFood {
   id: string;
   name: string;
@@ -7,24 +9,8 @@ export interface IFood {
   expiryDate: string;
 }
 
-export interface IMenu {
-  id: string;
-  date: string;
-  accompaniment: string;
-  garnish: string;
-  mainCourse: string;
-  dessert: string;
-}
-
-export interface IMenuCreateOrUpdate {
-  date: string;
-  accompaniment: string;
-  garnish: string;
-  mainCourse: string;
-  dessert: string;
-}
-
 export interface IFoodCreateOrUpdate {
+  id?: string
   name: string;
   nutritionalData: string;
   quantity: number;
@@ -39,14 +25,4 @@ export interface PaginatedItems<T> {
   size: number;
 }
 
-export interface IUser {
-  id?:string;
-  email: string,
-  password: string,
-  document: string,
-  name: string,
-  birthDate: string,
-}
-
-export type PaginatedFoods = PaginatedItems<IFood>;
 export type PaginatedMenus = PaginatedItems<IMenu>;
