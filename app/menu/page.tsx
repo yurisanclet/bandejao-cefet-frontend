@@ -27,6 +27,21 @@ export default function Menu() {
       });
   };
 
+  const getUserRole = () => {
+    if (typeof window !== 'undefined') {
+      const storedUser = JSON.parse(localStorage.getItem('role') || '{}');
+      return storedUser;
+    }
+    return null;
+  }
+
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const role = getUserRole();
+    setUserRole(role);
+  }, []);
+
   const onSave = () => {
     handleGetMenus();
   }
@@ -89,8 +104,12 @@ export default function Menu() {
             </List>
           </AccordionDetails>
           <AccordionActions>
-            <IconButton className='flex gap-2' color='primary' size='small' onClick={() => handleEdit({...menu})}>Editar <Edit /></IconButton>
-            <IconButton className='flex gap-2' color='error' size='small' onClick={() => handleConfirmDelete(menu.id)}>Deletar <Delete /></IconButton>
+            {userRole !== 'USER' && (
+              <IconButton className='flex gap-2' color='primary' size='small' onClick={() => handleEdit({...menu})}>Editar <Edit /></IconButton>
+            )}
+            {userRole !== 'USER' && (          
+              <IconButton className='flex gap-2' color='error' size='small' onClick={() => handleConfirmDelete(menu.id)}>Deletar <Delete /></IconButton>
+            )}
           </AccordionActions>
         </Accordion>
       ))}

@@ -20,12 +20,12 @@ export default function Perfil() {
     const userEmail = JSON.parse(storedUser);
     await userService.getLoggedUser(userEmail)
       .then((data) => {
-        console.log('user', data)
         setValue('id', data.id)
         setValue('name', data.name);
         setValue('document', data.document);
         setValue('email', data.email);
         setValue('birthDate', data.birthDate);
+        setValue('role', data.role);
       })
       .catch((error) => {
         console.error('Error fetching user:', error);

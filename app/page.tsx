@@ -13,10 +13,10 @@ import { IUser } from './entity/user.entity';
 export default function Login() {
     const userService = new UserService(client);
     const {handleSubmit, register, formState: { errors }} = useForm<IUser>({
-        defaultValues: {
-            email: '',
-            password: '',
-        }
+      defaultValues: {
+        email: '',
+        password: '',
+      }
     });
 
     const router = useRouter();
@@ -29,6 +29,7 @@ export default function Login() {
           setTimeout(() => {
             localStorage.setItem('token', response.access_token);
             localStorage.setItem('loggedUser', JSON.stringify(response.user));
+            localStorage.setItem('role', JSON.stringify(response.role));
             router.push("/home");
           }, 2000); 
         })

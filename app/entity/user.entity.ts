@@ -6,6 +6,7 @@ export interface IUser {
   document: string,
   name: string,
   birthDate: string,
+  role: string,
 }
 
 export interface CreateUser extends Omit<IUser, 'id'> {}
