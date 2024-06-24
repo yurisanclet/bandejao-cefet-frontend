@@ -1,16 +1,15 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Paper, 
   Tabs, 
   Tab, 
   Typography, 
   Box,
-  Chip,
-  CircularProgress,
+  Chip
 } from '@mui/material';
-import { IMenu } from '../inteface';
 import { addDays, format } from 'date-fns';
 import { formatDateWithWeekDay } from '../utils/date-formatter';
+import { IMenu } from '../entity/menu.entity';
 interface FutureMenuProps {
   setDateRange: (value: string) => void;
   menus: IMenu[]
